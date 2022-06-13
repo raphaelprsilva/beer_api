@@ -76,6 +76,23 @@ public class BeerControllerTest {
   }
 
   @Test
+  void whenGETIsCalledWithValidNameThenOkStatusIsReturned() throws Exception {
+    // given
+    BeerDTO beerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
+
+    //when
+    when(beerService.findByName(beerDTO.getName())).thenReturn(beerDTO);
+
+    // then
+    mockMvc.perform(MockMvcRequestBuilders.get(BEER_API_URL_PATH + "/" + beerDTO.getName())
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.name", is(beerDTO.getName())))
+        .andExpect(jsonPath("$.brand", is(beerDTO.getBrand())))
+        .andExpect(jsonPath("$.type", is(beerDTO.getType().toString())));
+  }
+
+  @Test
   void whenGETIsCalledWithoutRegisteredNameThenNotFoundStatusIsReturned() throws Exception {
     BeerDTO beerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
 
